@@ -1,12 +1,17 @@
-import React from "react";
+import React, { Component } from "react";
+import { observer, inject } from 'mobx-react'
 import DefaultLayout from "../layouts/DefaultLayout";
 
-const Dashboard = () => {
-  return (
-    <DefaultLayout toolbarTitle="Manage Products">
-      <div>Manage Products</div>
-    </DefaultLayout>
-  );
+@inject('productStore')
+@observer
+class ProductScreen extends Component {
+  render() {
+    return (
+      <DefaultLayout toolbarTitle="Manage Products">
+        <div>Manage Products</div>
+      </DefaultLayout>
+    );
+  }
 };
 
-export default Dashboard;
+export default ProductScreen;
