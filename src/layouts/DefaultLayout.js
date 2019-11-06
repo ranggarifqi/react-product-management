@@ -12,6 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { mainListItems } from './Menu';
 
 const drawerWidth = 240;
@@ -122,6 +123,9 @@ export default function DefaultLayout({ children, toolbarTitle }) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             { toolbarTitle }
           </Typography>
+          <IconButton color="inherit">
+            <ExitToAppIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer
