@@ -5,19 +5,21 @@ import Dashboard from './screens/Dashboard';
 import LoginScreen from './screens/LoginScreen';
 import ProductScreen from './screens/ProductScreen';
 
+import ProtectedRoute from './components/ProtectedRoute';
+
 const App = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
+        <ProtectedRoute exact path="/">
           <Dashboard />
-        </Route>
+        </ProtectedRoute>
         <Route path="/login">
           <LoginScreen />
         </Route>
-        <Route path="/products">
+        <ProtectedRoute path="/products">
           <ProductScreen />
-        </Route>
+        </ProtectedRoute>
       </Switch>
     </Router>
   );
