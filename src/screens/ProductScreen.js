@@ -1,7 +1,12 @@
-import React from 'react';
+import React from "react";
+import DefaultLayout from "../layouts/DefaultLayout";
 
-const ProductScreen = () => {
-  return <div>Ini adalah halaman managemen produk</div>;
-}
+const Dashboard = () => {
+  return (
+    <DefaultLayout toolbarTitle="Manage Products">
+      <div>Manage Products</div>
+    </DefaultLayout>
+  );
+};
 
-export default ProductScreen;
+export default Dashboard;

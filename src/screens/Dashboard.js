@@ -1,7 +1,12 @@
-import React from 'react';
+import React from "react";
+import DefaultLayout from "../layouts/DefaultLayout";
 
 const Dashboard = () => {
-  return <div>Ini adalah halaman dsahboard</div>;
-}
+  return (
+    <DefaultLayout toolbarTitle="Dashboard">
+      <div>Welcome</div>
+    </DefaultLayout>
+  );
+};
 
 export default Dashboard;
