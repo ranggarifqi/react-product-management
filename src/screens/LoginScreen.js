@@ -1,11 +1,13 @@
 import React, { useState, useRef } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import api from "../config/api";
 
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(theme => ({
   "@global": {
@@ -29,14 +31,44 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2)
+  },
+  circularProgress: {
+    display: "flex",
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: theme.spacing(3, 0, 2)
   }
 }));
+
+const RenderButton = ({ submitLoading }) => {
+  const classes = useStyles();
+
+  if (submitLoading) {
+    return (
+      <div className={classes.circularProgress}>
+        <CircularProgress />
+      </div>
+    );
+  }
+  return (
+    <Button
+      type="submit"
+      fullWidth
+      variant="contained"
+      color="primary"
+      className={classes.submit}
+    >
+      Sign In
+    </Button>
+  );
+};
 
 export default function LoginScreen() {
   const classes = useStyles();
   const formRef = useRef(null);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const onChangeEmail = e => {
     setEmail(e.target.value);
@@ -44,13 +76,21 @@ export default function LoginScreen() {
   const onChangePassword = e => {
     setPassword(e.target.value);
   };
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
     const payload = {
       email,
       password
     };
-    console.log("login cuy", payload);
+    try {
+      setSubmitLoading(true);
+      const { data } = await api.post("/users/login", payload);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   return (
@@ -94,15 +134,7 @@ export default function LoginScreen() {
             validators={["required"]}
             errorMessages={["this field is required"]}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
+          <RenderButton submitLoading={submitLoading} />
         </ValidatorForm>
       </div>
     </Container>
