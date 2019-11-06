@@ -2,6 +2,9 @@ import React, { useState, useRef } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import api from "../config/api";
 
+import MySnackbar from '../components/MySnackbar';
+import MyRedirect from '../components/MyRedirect';
+
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
@@ -37,7 +40,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     margin: theme.spacing(3, 0, 2)
-  }
+  },
 }));
 
 const RenderButton = ({ submitLoading }) => {
@@ -63,12 +66,16 @@ const RenderButton = ({ submitLoading }) => {
   );
 };
 
-export default function LoginScreen() {
+export default function LoginScreen(props) {
   const classes = useStyles();
   const formRef = useRef(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [showSnackbar, setSnowSnackbar] = useState(false);
+  const [snackbarMessage, setSnackBarMessage] = useState('');
+  const [redirect, setRedirect] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('');
 
   const onChangeEmail = e => {
     setEmail(e.target.value);
@@ -85,9 +92,22 @@ export default function LoginScreen() {
     try {
       setSubmitLoading(true);
       const { data } = await api.post("/users/login", payload);
-      console.log(data);
+      // Save ke local storage
+      localStorage.setItem('token', data.token);
+
+      // Push ke route `/`
+      setRedirectPath('/');
+      setRedirect(true);
     } catch (error) {
       console.log(error);
+      let errMsg;
+      if (error.response) {
+        errMsg = error.response.data.message;
+      } else {
+        errMsg = error.message
+      }
+      setSnackBarMessage(errMsg);
+      setSnowSnackbar(true);
     } finally {
       setSubmitLoading(false);
     }
@@ -137,6 +157,8 @@ export default function LoginScreen() {
           <RenderButton submitLoading={submitLoading} />
         </ValidatorForm>
       </div>
+      <MySnackbar visible={showSnackbar} message={snackbarMessage} onClose={() => setSnowSnackbar(false)} />
+      <MyRedirect redirect={redirect} routeName={redirectPath} />
     </Container>
   );
 }

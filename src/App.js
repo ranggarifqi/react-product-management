@@ -1,10 +1,11 @@
 import React from "react";
-import { Switch, BrowserRouter as Router, Route } from "react-router-dom";
+import { Switch, BrowserRouter as Router } from "react-router-dom";
 
 import Dashboard from './screens/Dashboard';
 import LoginScreen from './screens/LoginScreen';
 import ProductScreen from './screens/ProductScreen';
 
+import LoginRoute from './components/LoginRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
@@ -14,9 +15,9 @@ const App = () => {
         <ProtectedRoute exact path="/">
           <Dashboard />
         </ProtectedRoute>
-        <Route path="/login">
+        <LoginRoute path="/login">
           <LoginScreen />
-        </Route>
+        </LoginRoute>
         <ProtectedRoute path="/products">
           <ProductScreen />
         </ProtectedRoute>

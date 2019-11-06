@@ -7,24 +7,24 @@ import {
 const checkIsAuthenticated = () => {
   // cek di local storage apakah ada key `token`
   const token = localStorage.getItem('token');
-  if (token) {
+  if (!token) {
     return true;
   }
   return false;
 }
 
-const ProtectedRoute = ({ children, ...rest }) => {
-  const isAuthenticated = checkIsAuthenticated();
+const LoginRoute = ({ children, ...rest }) => {
+  const isNotAuthenticated = checkIsAuthenticated();
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        isAuthenticated ? (
+        isNotAuthenticated ? (
           children
         ) : (
           <Redirect
             to={{
-              pathname: "/login",
+              pathname: "/",
               state: { from: location }
             }}
           />
@@ -34,4 +34,4 @@ const ProtectedRoute = ({ children, ...rest }) => {
   );
 };
 
-export default ProtectedRoute;
+export default LoginRoute;
