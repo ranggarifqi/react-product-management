@@ -8,8 +8,8 @@ const CardList = ({ items }) => {
     <Grid container spacing={3}>
       {items.map(item => {
         return (
-          <Grid item xs={4}>
-            <CardItem item={item} key={item.id} />
+          <Grid item xs={4} key={item.id}>
+            <CardItem item={item} />
           </Grid>
         );
       })}
