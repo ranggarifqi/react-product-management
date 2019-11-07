@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import api from "../config/api";
 
 import DefaultLayout from "../layouts/DefaultLayout";
-import MyRedirect from '../components/MyRedirect';
+import MyRedirect from "../components/MyRedirect";
+import MySnackbar from "../components/MySnackbar";
 
-import { Button, Card, CardContent, CardActions } from "@material-ui/core";
+import { Button, Card, CardContent, CardActions, CircularProgress } from "@material-ui/core";
 import { inject, observer } from "mobx-react";
 
 @inject("productStore")
@@ -18,7 +20,10 @@ class ProductAddScreen extends Component {
     image: "",
     description: "",
     redirect: false,
-    redirectTo: null
+    redirectTo: null,
+    submitLoading: false,
+    showSnackbar: false,
+    snackbarMessage: null
   };
 
   onChangeName = e => {
@@ -37,8 +42,9 @@ class ProductAddScreen extends Component {
     this.setState({ description: e.target.value });
   };
 
-  onSubmit = e => {
+  onSubmit = async e => {
     e.preventDefault();
+    this.setState({ submitLoading: true });
     const { name, sku, price, image, description } = this.state;
     const payload = {
       name,
@@ -48,12 +54,66 @@ class ProductAddScreen extends Component {
       description
     };
     console.log("on Submit", payload);
-    this.props.productStore.addItem({id : sku, ...payload});
-    this.setState({ redirect: true, redirectTo: '/products' });
+    try {
+      const token = window.localStorage.getItem("token");
+      await api.post("/products", payload, {
+        headers: {
+          Authorization: token
+        }
+      });
+      this.props.productStore.addItem({ id: sku, ...payload });
+      this.setState({ redirect: true, redirectTo: "/products" });
+    } catch (error) {
+      console.log(error);
+      let errMsg;
+      if (error.response) {
+        errMsg = error.response.data.message;
+      } else {
+        errMsg = error.message;
+      }
+      this.setState({
+        showSnackbar: true,
+        snackbarMessage: errMsg
+      });
+    } finally {
+      this.setState({ submitLoading: false });
+    }
+  };
+
+  renderButton = () => {
+    const { submitLoading } = this.state;
+    
+    if (submitLoading) {
+      return (
+        <div style={{ marginLeft: "auto" }}>
+          <CircularProgress />
+        </div>
+      );
+    }
+    return (
+      <div style={{ marginLeft: "auto" }}>
+        <Button component={Link} to="/products">
+          Kembali
+        </Button>
+        <Button type="submit" style={{ color: "green" }}>
+          Submit
+        </Button>
+      </div>
+    );
   };
 
   render() {
-    const { name, sku, price, image, description } = this.state;
+    const {
+      name,
+      sku,
+      price,
+      image,
+      description,
+      showSnackbar,
+      snackbarMessage,
+      redirect,
+      redirectTo
+    } = this.state;
     return (
       <DefaultLayout toolbarTitle="Add Products">
         <Card>
@@ -135,21 +195,15 @@ class ProductAddScreen extends Component {
                 onChange={this.onChangeDescription}
               />
             </CardContent>
-            <CardActions>
-              <Button
-                component={Link}
-                to="/products"
-                style={{ marginLeft: "auto" }}
-              >
-                Kembali
-              </Button>
-              <Button type="submit" style={{ color: "green" }}>
-                Submit
-              </Button>
-            </CardActions>
+            <CardActions>{this.renderButton()}</CardActions>
           </ValidatorForm>
         </Card>
-        <MyRedirect redirect={this.state.redirect} routeName={this.state.redirectTo} />
+        <MySnackbar
+          visible={showSnackbar}
+          message={snackbarMessage}
+          onClose={() => this.setState({ showSnackbar: false })}
+        />
+        <MyRedirect redirect={redirect} routeName={redirectTo} />
       </DefaultLayout>
     );
   }
