@@ -93,7 +93,7 @@ const ProductAddScreen = () => {
               margin="normal"
               fullWidth
               id="image"
-              label="Product Image"
+              label="Product Image URL"
               name="image"
               autoComplete="image"
               autoFocus
@@ -104,6 +104,8 @@ const ProductAddScreen = () => {
               variant="outlined"
               margin="normal"
               fullWidth
+              multiline
+              rows="4"
               id="description"
               label="Product Description"
               name="description"
