@@ -26,5 +26,10 @@ class ProductStore {
     this.idWillBeDeleted = null;
     this.showDeleteDialog = false;
   }
+  
+  @action deleteItemsById() {
+    const idx = this.items.findIndex(v => v.id === this.idWillBeDeleted);
+    this.items.splice(idx, 1);
+  }
 }
 export default ProductStore

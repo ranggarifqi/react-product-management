@@ -15,7 +15,8 @@ import AddIcon from "@material-ui/icons/Add";
 @observer
 class ProductScreen extends Component {
   state = {
-    fetchLoading: false
+    fetchLoading: false,
+    deleteLoading: false
   };
 
   componentDidMount() {
@@ -25,6 +26,25 @@ class ProductScreen extends Component {
   handleDialogClose = () => {
     this.props.productStore.closeDeleteDialog();
   };
+
+  handleDelete = async () => {
+    try {
+      this.setState({ deleteLoading: true });
+      const token = window.localStorage.getItem("token");
+      await api.delete(`/products/${this.props.productStore.idWillBeDeleted}`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      this.props.productStore.deleteItemsById();
+      this.props.productStore.closeDeleteDialog();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({ deleteLoading: false });
+      console.log('Selesai Delete');
+    }
+  }
 
   async fetchProducts() {
     try {
@@ -71,6 +91,8 @@ class ProductScreen extends Component {
           id={this.props.productStore.idWillBeDeleted}
           showDialog={this.props.productStore.showDeleteDialog}
           handleClose={this.handleDialogClose}
+          onDelete={this.handleDelete}
+          disableClose={this.state.deleteLoading}
         />
       </DefaultLayout>
     );
