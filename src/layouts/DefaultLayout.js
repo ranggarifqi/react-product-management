@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import { withRouter } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -96,7 +97,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DefaultLayout({ children, toolbarTitle }) {
+const DefaultLayout = ({ children, toolbarTitle, history }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -123,7 +124,10 @@ export default function DefaultLayout({ children, toolbarTitle }) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             { toolbarTitle }
           </Typography>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => {
+            window.localStorage.removeItem('token');
+            history.push('/login');
+          }}>
             <ExitToAppIcon />
           </IconButton>
         </Toolbar>
@@ -169,3 +173,5 @@ export default function DefaultLayout({ children, toolbarTitle }) {
     </div>
   );
 }
+
+export default withRouter(DefaultLayout);
