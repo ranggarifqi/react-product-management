@@ -24,8 +24,12 @@ const App = () => {
             <LoginScreen />
           </LoginRoute>
 
-          <ProtectedRoute exact path="/products" component={ProductScreen} />
-          <ProtectedRoute exact path="/products/add" component={ProductAddScreen} />
+          <ProtectedRoute exact path="/products">
+            <ProductScreen />
+          </ProtectedRoute>
+          <ProtectedRoute exact path="/products/add">
+            <ProductAddScreen />
+          </ProtectedRoute>
         </Switch>
       </Router>
     </Provider>
