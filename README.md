@@ -38,6 +38,7 @@ Asumming that you're already inside `root` directory :
 3. The app will be available at `http://localhost:3001`
 
 ## About Elevenia
+
 There was a problem when i tried to fetch from Elevenia API.
 
 It was CORS. So i tried to use proxy using (https://cors-anywhere.herokuapp.com/)
@@ -47,5 +48,7 @@ But the request took so long to process.
 So i created a separate branch so we can check the feature.
 
 `git checkout feature/elevenia`
+
+### First thing you have to do after checking out to `feature/elevenia` branch is to update your env configuration. check `.env.example`
 
 ### Elevenia API is called if we don't have any products data yet
