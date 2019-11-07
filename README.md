@@ -1,4 +1,4 @@
-# Employee Log Admin
+# React Product Management
 
 The project is created using `create-react-app` (https://github.com/facebook/create-react-app).
 
