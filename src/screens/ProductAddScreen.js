@@ -3,15 +3,22 @@ import { Link } from "react-router-dom";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 
 import DefaultLayout from "../layouts/DefaultLayout";
-import { Button, Card, CardContent, CardActions } from "@material-ui/core";
+import MyRedirect from '../components/MyRedirect';
 
+import { Button, Card, CardContent, CardActions } from "@material-ui/core";
+import { inject, observer } from "mobx-react";
+
+@inject("productStore")
+@observer
 class ProductAddScreen extends Component {
   state = {
     name: "",
     sku: "",
     price: 0,
     image: "",
-    description: ""
+    description: "",
+    redirect: false,
+    redirectTo: null
   };
 
   onChangeName = e => {
@@ -41,6 +48,8 @@ class ProductAddScreen extends Component {
       description
     };
     console.log("on Submit", payload);
+    this.props.productStore.addItem({id : sku, ...payload});
+    this.setState({ redirect: true, redirectTo: '/products' });
   };
 
   render() {
@@ -140,6 +149,7 @@ class ProductAddScreen extends Component {
             </CardActions>
           </ValidatorForm>
         </Card>
+        <MyRedirect redirect={this.state.redirect} routeName={this.state.redirectTo} />
       </DefaultLayout>
     );
   }

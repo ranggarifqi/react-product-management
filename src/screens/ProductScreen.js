@@ -33,7 +33,7 @@ class ProductScreen extends Component {
           Authorization: token
         }
       });
-      this.props.productStore.addItems(data.products, true);
+      this.props.productStore.setItems(data.products, true);
       console.log(data.products);
     } catch (error) {
       console.log(error);
