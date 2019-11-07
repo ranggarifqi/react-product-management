@@ -10,12 +10,11 @@ import LoginRoute from "./components/LoginRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import ProductStore from "./stores/product.store";
+import ProductAddScreen from "./screens/ProductAddScreen";
 
 const App = () => {
   return (
-    <Provider
-      productStore={new ProductStore()}
-    >
+    <Provider productStore={new ProductStore()}>
       <Router>
         <Switch>
           <ProtectedRoute exact path="/">
@@ -24,9 +23,9 @@ const App = () => {
           <LoginRoute path="/login">
             <LoginScreen />
           </LoginRoute>
-          <ProtectedRoute path="/products">
-            <ProductScreen />
-          </ProtectedRoute>
+
+          <ProtectedRoute exact path="/products" component={ProductScreen} />
+          <ProtectedRoute exact path="/products/add" component={ProductAddScreen} />
         </Switch>
       </Router>
     </Provider>
