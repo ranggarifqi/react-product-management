@@ -1,6 +1,6 @@
 # Employee Log Admin
 
-The project is create using `create-react-app` (https://github.com/facebook/create-react-app).
+The project is created using `create-react-app` (https://github.com/facebook/create-react-app).
 
 ## Description
 
