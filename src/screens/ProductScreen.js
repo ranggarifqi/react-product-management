@@ -34,7 +34,6 @@ class ProductScreen extends Component {
         }
       });
       this.props.productStore.setItems(data.products, true);
-      console.log(data.products);
     } catch (error) {
       console.log(error);
     } finally {

@@ -4,7 +4,6 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import api from "../config/api";
 
 import DefaultLayout from "../layouts/DefaultLayout";
-import MyRedirect from "../components/MyRedirect";
 import MySnackbar from "../components/MySnackbar";
 
 import {
@@ -82,7 +81,6 @@ class ProductEditScreen extends Component {
       image: image === "" ? null : image,
       description
     };
-    console.log("on Submit", payload);
     try {
       const token = window.localStorage.getItem("token");
       const id = this.props.match.params.id;
@@ -92,7 +90,7 @@ class ProductEditScreen extends Component {
         }
       });
       this.props.productStore.addItem({ id: sku, ...payload });
-      this.setState({ redirect: true, redirectTo: "/products" });
+      this.props.history.push('/products');
     } catch (error) {
       console.log(error);
       let errMsg;
@@ -141,8 +139,6 @@ class ProductEditScreen extends Component {
       description,
       showSnackbar,
       snackbarMessage,
-      redirect,
-      redirectTo,
       finishFetchProduct
     } = this.state;
     return (
@@ -239,7 +235,6 @@ class ProductEditScreen extends Component {
           message={snackbarMessage}
           onClose={() => this.setState({ showSnackbar: false })}
         />
-        <MyRedirect redirect={redirect} routeName={redirectTo} />
       </DefaultLayout>
     );
   }

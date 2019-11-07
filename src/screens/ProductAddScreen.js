@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import api from "../config/api";
 
 import DefaultLayout from "../layouts/DefaultLayout";
-import MyRedirect from "../components/MyRedirect";
 import MySnackbar from "../components/MySnackbar";
 
 import { Button, Card, CardContent, CardActions, CircularProgress } from "@material-ui/core";
@@ -19,8 +18,6 @@ class ProductAddScreen extends Component {
     price: 0,
     image: "",
     description: "",
-    redirect: false,
-    redirectTo: null,
     submitLoading: false,
     showSnackbar: false,
     snackbarMessage: null
@@ -53,7 +50,6 @@ class ProductAddScreen extends Component {
       image: image === "" ? null : image,
       description
     };
-    console.log("on Submit", payload);
     try {
       const token = window.localStorage.getItem("token");
       await api.post("/products", payload, {
@@ -62,7 +58,7 @@ class ProductAddScreen extends Component {
         }
       });
       this.props.productStore.addItem({ id: sku, ...payload });
-      this.setState({ redirect: true, redirectTo: "/products" });
+      this.props.history.push('/products');
     } catch (error) {
       console.log(error);
       let errMsg;
@@ -111,8 +107,6 @@ class ProductAddScreen extends Component {
       description,
       showSnackbar,
       snackbarMessage,
-      redirect,
-      redirectTo
     } = this.state;
     return (
       <DefaultLayout toolbarTitle="Add Products">
@@ -203,10 +197,9 @@ class ProductAddScreen extends Component {
           message={snackbarMessage}
           onClose={() => this.setState({ showSnackbar: false })}
         />
-        <MyRedirect redirect={redirect} routeName={redirectTo} />
       </DefaultLayout>
     );
   }
 }
 
-export default ProductAddScreen;
+export default withRouter(ProductAddScreen);
