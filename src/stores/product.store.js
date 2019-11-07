@@ -1,10 +1,14 @@
 import { action, computed, observable } from "mobx";
 
 class ProductStore {
-  @observable items = 0;
+  @observable items = [];
 
-  @action addItems () {
-    this.items++;
+  @action addItems (newItems, firstTime = false) {
+    if (firstTime) {
+      this.items = newItems;
+    } else {
+      this.items = [...this.items, ...newItems];
+    }
   }
 }
 export default ProductStore
