@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { observer, inject } from "mobx-react";
 import { Link } from "react-router-dom";
+import convert from 'xml-js';
+
 import DefaultLayout from "../layouts/DefaultLayout";
 import api from "../config/api";
 
@@ -10,13 +12,15 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import { CircularProgress, Fab } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import AddIcon from "@material-ui/icons/Add";
+import elevenia from "../config/elevenia";
 
 @inject("productStore")
 @observer
 class ProductScreen extends Component {
   state = {
     fetchLoading: false,
-    deleteLoading: false
+    deleteLoading: false,
+    fetchMessage: ''
   };
 
   componentDidMount() {
@@ -55,7 +59,25 @@ class ProductScreen extends Component {
           Authorization: token
         }
       });
-      this.props.productStore.setItems(data.products, true);
+      if (data.totalItems === 0) {
+        // Fetch ke Elevenia
+        const elProducts = await this.fetchFromElevenia();
+
+        // Post ke Server agar disimpan di DB
+        for (let v of elProducts) {
+          console.log('Posting', v);
+          await api.post('/products', v, {
+            headers: {
+              Authorization: token
+            }
+          })
+        }
+        
+        // Reload pagenya
+        location.reload();
+      } else {
+        this.props.productStore.setItems(data.products, true);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -63,10 +85,38 @@ class ProductScreen extends Component {
     }
   }
 
+  async fetchFromElevenia() {
+    try {
+      this.setState({ fetchMessage: 'Fetching Data from Elevenia...' })
+      const { data } = await elevenia.get('/prodservices/product/listing?page=1');
+      var parsed = JSON.parse(convert.xml2json(data, {compact: true, spaces: 2}));
+      const products = parsed.Products.product.slice(0, 6)
+      const mappedProducts = products.map((v) => {
+        return {
+          name: v.prdNm['_text'],
+          price: parseInt(v.selPrc['_text']),
+          description: `${v.dispCtgrNm['_text']} - ${v.dispCtgrNmMid['_text']} - ${v.dispCtgrNmRoot['_text']}`,
+          image: 'https://dummyimage.com/600x400/000/fff',
+          sku: v.sellerPrdCd['_text']
+        }
+      });
+      this.setState({ fetchMessage: '' })
+      return Promise.resolve(mappedProducts);
+    } catch (error) {
+      this.setState({ fetchMessage: '' })
+      return Promise.reject(error);
+    }
+  }
+
   renderContent() {
     const { classes, productStore } = this.props;
-    if (this.fetchLoading) {
-      return <CircularProgress />;
+    if (this.state.fetchLoading) {
+      return (
+        <div>
+          <CircularProgress />
+          <p>{this.state.fetchMessage}</p>
+        </div>
+      );
     }
     return (
       <div>
