@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import { observer, inject } from "mobx-react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import DefaultLayout from "../layouts/DefaultLayout";
 import api from "../config/api";
 
 import CardList from "../components/CardList";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
-import {
-  CircularProgress,
-  Fab
-} from "@material-ui/core";
+import { CircularProgress, Fab } from "@material-ui/core";
 import { withStyles } from "@material-ui/styles";
 import AddIcon from "@material-ui/icons/Add";
 
@@ -23,6 +21,10 @@ class ProductScreen extends Component {
   componentDidMount() {
     this.fetchProducts();
   }
+
+  handleDialogClose = () => {
+    this.props.productStore.closeDeleteDialog();
+  };
 
   async fetchProducts() {
     try {
@@ -49,7 +51,12 @@ class ProductScreen extends Component {
     return (
       <div>
         <CardList items={productStore.items} />
-        <Fab className={classes.fab} color="primary" component={Link} to="/products/add" >
+        <Fab
+          className={classes.fab}
+          color="primary"
+          component={Link}
+          to="/products/add"
+        >
           <AddIcon />
         </Fab>
       </div>
@@ -60,6 +67,11 @@ class ProductScreen extends Component {
     return (
       <DefaultLayout toolbarTitle="Manage Products">
         {this.renderContent()}
+        <ConfirmationDialog
+          id={this.props.productStore.idWillBeDeleted}
+          showDialog={this.props.productStore.showDeleteDialog}
+          handleClose={this.handleDialogClose}
+        />
       </DefaultLayout>
     );
   }
