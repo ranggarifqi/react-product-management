@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import ProductStore from "./stores/product.store";
 import ProductAddScreen from "./screens/ProductAddScreen";
+import ProductEditScreen from "./screens/ProductEditScreen";
 
 const App = () => {
   return (
@@ -24,6 +25,9 @@ const App = () => {
             <LoginScreen />
           </LoginRoute>
 
+          <ProtectedRoute exact path="/products/:id/edit">
+            <ProductEditScreen />
+          </ProtectedRoute>
           <ProtectedRoute exact path="/products">
             <ProductScreen />
           </ProtectedRoute>
